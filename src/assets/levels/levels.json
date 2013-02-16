@@ -1,0 +1,22 @@
+{
+	"levels": [
+		{
+			"ID" : 0,
+			"boundingX" : -2000,
+			"playerX" : 200,
+			"playerY" : 400,
+			"entities": [
+				{
+					"type": "grass",
+					"x": 200,
+					"y": 200
+				},
+				{
+					"type": "dirt",
+					"x": 300,
+					"y": 200
+				}
+			]
+		}
+	]
+}
