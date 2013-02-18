@@ -2,6 +2,7 @@ package
 {
 	import net.flashpunk.Engine;
 	import net.flashpunk.FP;
+	import net.flashpunk.ScreenRetro;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	
@@ -12,6 +13,7 @@ package
 		public function Game()
 		{
 			super(640, 480);
+			//FP.screen = new ScreenRetro; Uncomment for scanlines...
 			FP.world = new Gameplay;
 			
 			Input.define("LEFT", Key.LEFT);

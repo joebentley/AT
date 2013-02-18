@@ -4,6 +4,7 @@ package
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	import net.flashpunk.Entity;
+	import net.flashpunk.ScreenRetro;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.World;
 	import net.flashpunk.FP;
