@@ -12,7 +12,7 @@ package
 		{
 			t = new Text("Score: 0");
 			graphic = t;
-			
+			t.scale = 1.5;
 			graphic.scrollX = 0;
 		}
 		

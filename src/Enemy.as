@@ -2,6 +2,7 @@ package
 {
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Spritemap;
+	import net.flashpunk.FP;
 	
 	public class Enemy extends Entity
 	{
@@ -30,6 +31,14 @@ package
 			if (onCamera) { onScreen = true; }
 			
 			if (onScreen) { x -= 1; }
+			
+			if (collide("player", x, y))
+			{
+				if (Gameplay.player.attacking == true)
+				{
+					FP.world.remove(this);
+				}
+			}
 		}
 	}
 }

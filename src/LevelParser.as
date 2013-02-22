@@ -19,7 +19,6 @@ package
 			var levels:Object = JSON.decode(json);
 			
 			// Find correct level
-			
 			for each (var level:Object in levels.levels)
 			{
 				if (level.ID == ID)

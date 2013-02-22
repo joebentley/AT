@@ -29,10 +29,11 @@ package
 		
 		public var score:int; // Points!!!
 		public var health:int;
+		public var attacking:Boolean; // True if player is currently attacking
 		
 		public function Player(x:int, y:int)
 		{
-			i = new Spritemap(PLAYER, 8, 22);
+			i = new Spritemap(PLAYER, 10, 22);
 			jumpsfx = new Sfx(JUMP_SOUND);
 			landsfx = new Sfx(LANDING_SOUND);
 			stepsfx = new Sfx(STEP_SOUND);
@@ -42,9 +43,9 @@ package
 			velocity = new Point(0, 0);
 			acceleration = new Point(0.1, 0.5);
 			speed = 3;
-			
 			score = 0;
 			health = 3;
+			attacking = false;
 			
 			i.scale = 6;
 			graphic = i;
@@ -53,19 +54,24 @@ package
 			this.y = y;
 			
 			type = "player";
-			setHitbox(i.scaledWidth, i.scaledHeight);
+			setHitbox(i.scaledWidth - i.scale * 2, i.scaledHeight); // Compensate for SHITTY flashpunk spritemaps
 			
 			layer = -1;
 			
 			i.add("standing", [0]);
 			i.add("walking", [1, 2, 3, 4], 10);
+			i.add("attacking", [5]);
+			
 			i.play("standing");
 		}
 		
 		private var walkCounter:int = 0; // For walking sound
 		private var hitInvuln:Boolean = false; // Prevent double collision
-		private var hitCounter:int = 0; // 3 second hit counter
+		private var hitCounter:int = 0; // 3 second invuln counter
 		private var stopping:Boolean = false; // Check if stopping, for deceleration
+		private var attackingCounter:int = 0; // Remembers how long to hit for
+		private var attackingCooldown:int = 0; // Frames before player can attack again
+		private var walking:Boolean = false; // True if walking
 		override public function update():void
 		{
 			// Add acceleration to velocities, if v + a is greater than maxspeed, set v to maxspeed
@@ -74,16 +80,15 @@ package
 				velocity.x -= acceleration.x;
 				if (velocity.x < -speed) { velocity.x = -speed; }
 				i.flipped = true;
-				i.play("walking");
+				walking = true;
 			}
 			
 			if (Input.check("RIGHT"))
 			{
 				velocity.x += acceleration.x;
 				if (velocity.x > speed) { velocity.x = speed; }
-				
 				i.flipped = false;
-				i.play("walking");
+				walking = true;
 			}
 			
 			// If on ground and left or right are released, slow until stop
@@ -103,18 +108,39 @@ package
 				{
 					velocity.x = 0;
 					stopping = false;
-					i.play("standing");
+					walking = false;
 					walkCounter = 0;
 				}
 			}
 			
+			// TODO: Implement knee bend on jump, jumping anim
+			
+			// Jumping
 			if (Input.pressed("JUMP") && y == 350 - i.scaledHeight) // Only allow jumping on ground
 			{
 				jumpsfx.play();
 				velocity.y = -10;
 			}
 			
-			// TODO: Implement knee bend on jump, jumping anim
+			// Do attack if cooldown runs out
+			if (attackingCooldown <= 0)
+			{
+				if (Input.pressed("ATTACK"))
+				{
+					attacking = true;
+					attackingCounter = 0;
+					attackingCooldown = 40;
+					hitsfx.play();
+				}
+				
+			} else { attackingCooldown--; }
+			
+			// Keep attacking for a while
+			if (attackingCounter >= 20)
+			{
+				attacking = false;
+			}
+			attackingCounter++;
 			
 			if (y + velocity.y > 350 - i.scaledHeight) // We want to check that it will collide with the surface the frame before it passes through it
 			{
@@ -123,8 +149,8 @@ package
 				velocity.y = 0;	
 			} else if (y < 350 - i.scaledHeight) { velocity.y += acceleration.y; }
 			
-			// Playing walking sound if not still and on ground, also ensure that animation speed is right
-			if (velocity.x != 0 && y == 350 - i.scaledHeight)
+			// Playing walking sound if not still, on ground and not attacking, also ensure that animation speed is right
+			if (velocity.x != 0 && y == 350 - i.scaledHeight && !attacking)
 			{
 				if (walkCounter == 25) { stepsfx.play(0.8); walkCounter = 0; }
 				walkCounter++;
@@ -144,17 +170,25 @@ package
 			
 			if (collide("enemy", x, y))
 			{
-				if (health > 0 && !hitInvuln)
-				{ 
-					health--;
-					hitInvuln = true;
-					hitsfx.play();
-				}
-				
-				if (health == 0)
+				if (attacking == false)
 				{
-					deathsfx.play(0.7);
-					FP.world.remove(this);
+					if (health > 0 && !hitInvuln)
+					{ 
+						health--;
+						hitInvuln = true;
+						hitsfx.play();
+					}
+					
+					if (health == 0)
+					{
+						deathsfx.play(0.7);
+						FP.world.remove(this);
+					}
+				}
+				else
+				{
+					score += 100;
+					deathsfx.play(); // TODO: Replace with something else
 				}
 			}
 			else if (hitCounter >= 120)
@@ -176,6 +210,11 @@ package
 			{
 				visible = true;
 			}
+			
+			// Handle animations and hitboxes
+			if (attacking) { i.play("attacking"); setHitbox(i.scaledWidth, i.scaledHeight); }
+			else if (walking) {	i.play("walking"); setHitbox(i.scaledWidth - i.scale * 2, i.scaledHeight); }
+			else if (!walking) { i.play("standing"); setHitbox(i.scaledWidth - i.scale * 2, i.scaledHeight); }
 			
 			// Update movement
 			x += velocity.x;

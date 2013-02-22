@@ -13,12 +13,13 @@ package
 		public function Game()
 		{
 			super(640, 480);
-			//FP.screen = new ScreenRetro; Uncomment for scanlines...
+			FP.screen = new ScreenRetro; // Uncomment for scanlines...
 			FP.world = new Gameplay;
 			
 			Input.define("LEFT", Key.LEFT);
 			Input.define("RIGHT", Key.RIGHT);
-			Input.define("JUMP", Key.Z, Key.SPACE, Key.UP);
+			Input.define("ATTACK", Key.Z);
+			Input.define("JUMP", Key.X, Key.SPACE, Key.UP);
 		}
 	}
 }
