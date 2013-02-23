@@ -31,6 +31,11 @@ package
 			sound = new Sfx(COIN_SOUND);
 		}
 		
+		override public function removed():void
+		{
+			sound.play();
+		}
+		/*
 		override public function update():void
 		{
 			if (collide("player", x, y))
@@ -38,6 +43,6 @@ package
 				sound.play();
 				FP.world.remove(this);
 			}
-		}
+		}*/
 	}
 }

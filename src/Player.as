@@ -163,12 +163,15 @@ package
 			}
 			
 			// Collisions
-			if (collide("coin", x, y))
+			var coin:Entity = collide("coin", x, y);
+			if (coin)
 			{
+				FP.world.remove(coin);
 				score += 100;
 			}
 			
-			if (collide("enemy", x, y))
+			var enemy:Entity = collide("enemy", x, y);
+			if (enemy)
 			{
 				if (attacking == false)
 				{
@@ -188,6 +191,7 @@ package
 				else
 				{
 					score += 100;
+					FP.world.remove(enemy);
 					deathsfx.play(); // TODO: Replace with something else
 				}
 			}
@@ -220,5 +224,26 @@ package
 			x += velocity.x;
 			y += velocity.y;
 		}
+		
+		/**
+		 * Return entity if player is on ground
+		 * @param	x x coord of player
+		 * @param	y y coord of player
+		 * @param	h height of player
+		 * @param	w width of player
+		 * @param	type type of object to collide with
+		 * @return  Entity return entity of ground
+		 */
+		/*public function ground(x:int, y:int, w:int, h:int, type:String):Entity
+		{
+			var g:Entity = collide(type, x, y + h);
+			if (g && collide(type, x, y) == null)
+			{
+				return g;
+			}
+			else { return null; }
+		}*/
+		
+		// TODO: Add better collision detection for ground instead of hardcoded values...this is going to be a platformer right?
 	}
 }

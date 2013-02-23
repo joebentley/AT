@@ -1,17 +1,16 @@
 package
 {
-	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Image;
 	
-	public class Dirt extends Entity
+	public class Dirt extends Block
 	{
 		[Embed(source = "assets/images/dirt.png")] private const DIRT:Class;
 		private var i:Image = new Image(DIRT);
 		
-		public function Dirt(_x:int, _y:int)
+		public function Dirt(x:int, y:int)
 		{
-			x = _x;
-			y = _y;
+			this.x = x;
+			this.y = y;
 			
 			i.scale = 3;
 			graphic = i;

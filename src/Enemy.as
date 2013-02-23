@@ -29,16 +29,7 @@ package
 		override public function update():void
 		{
 			if (onCamera) { onScreen = true; }
-			
 			if (onScreen) { x -= 1; }
-			
-			if (collide("player", x, y))
-			{
-				if (Gameplay.player.attacking == true)
-				{
-					FP.world.remove(this);
-				}
-			}
 		}
 	}
 }
